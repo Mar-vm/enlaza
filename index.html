@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traductor de LSM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400&display=swap" rel="stylesheet">
+
+
+    <style>
+        /* Estilos Generales */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1em 2em; /* Espaciado interior */
+            background-color: #ffffff; /* Fondo blanco */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Opcional: sombra ligera */
+            height: 60px; /* Altura fija del header */
+                }
+
+        .logo { 
+            display: flex; /* Centra el texto e imagen dentro del logo */
+            align-items: center; /* Alinea verticalmente */
+            gap: 0.5em; 
+        }
+
+        .logo-img {
+            width: 80px; /* Ajusta el tamaño del logo */
+            height: auto;
+        }
+        .logo-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2em;
+            color: #53a7d8;
+            margin: 0;
+        }
+        .navbar {
+            display: flex; /* Alinea los elementos horizontalmente */
+            gap: 0.5em; /* Espacio entre los enlaces */
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #53a7d8; /* Color del texto */
+            font-size: 1em;
+            transition: color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #015c92; /* Cambia de color al hacer hover */
+        }
+        /* Video */
+        .video-container {
+            width: 100%;            /* Ocupa todo el ancho */
+            margin: 0;              /* Elimina márgenes */
+            padding: 0;             /* Elimina padding */
+            background-color: #f2f2f2;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: auto;
+            border-radius: 0;
+            display: block;
+        }
+
+        /* Hero Section con degradado */
+        .hero {
+            background: linear-gradient(to bottom, #2d82b5, #88cdf6);
+            color: white;
+            text-align: center;
+            padding: 3em 2em;
+        }
+
+        .hero h1 {
+            font-size: 2.5em;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8em 1.5em;
+            margin: 0.5em;
+            font-size: 1em;
+            background-color: #ffffff;
+            color: #015c92;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            color: #ffffff;
+            background-color: #2d82b5;
+        }
+
+        /* Estadísticas */
+        .stats {
+            background: linear-gradient(to bottom, #88cdf6, #bce6ff);
+            color: #015c92;
+            text-align: center;
+            padding: 4em 1em;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 2em;
+        }
+
+        .stat {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            margin-top: 0.5em;
+            font-size: 1em;
+            font-weight: normal;
+        }
+
+        /* Contenedor individual de cada estadística */
+        .stat-item {
+            flex: 1; /* Cada contenedor ocupa el mismo espacio */
+            display: flex; /* Flexbox interno */
+            flex-direction: column; /* Alinea contenido verticalmente */
+            justify-content: flex-start; /* Alinea el texto superiormente */
+            align-items: center; /* Centra el contenido horizontalmente */
+            text-align: center;
+            min-height: 150px; /* Altura mínima uniforme */
+            padding: 1em; /* Espaciado interno */
+        }
+
+        /* Número de estadística */
+        .stat-item h3 {
+            font-size: 3em;
+            margin: 0;
+            color: #015c92; /* Color azul oscuro */
+        }
+
+        /* Texto descriptivo */
+        .stat-item p {
+            font-size: 1em;
+            margin: 1em 0 0 0; /* Espacio superior */
+            color: #015c92;
+            line-height: 1.4;
+        }
+        /* Beneficios */
+        .benefits {
+            position: relative; /* Para que los círculos se posicionen relativos a esta sección */
+            overflow: hidden;  /* Permite que los círculos sean visibles */
+            padding: 4em 1em;   /* Espaciado interior */
+            background-color: #f9f9f9;
+            min-height: 500px;  /* Asegura suficiente altura */
+        }
+
+        .benefit {
+            display: flex;
+            align-items: center;
+            margin: 2em 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-in-out;
+            position: relative;
+            z-index: 2;
+            color: #015c92;
+        }
+
+        .benefit img {
+            width: 40%;
+            border-radius: 10px;
+        }
+
+        .benefit .text {
+            width: 50%;
+            padding: 1em;
+        }
+
+        .benefit h3 {
+            font-size: 1.8em;
+        }
+
+        .benefit.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Figuras dinámicas debajo de beneficios */
+        .decorative {
+            position: absolute;
+            background-color: rgba(0, 123, 255, 0.3); /* Opacidad inicial */
+            border-radius: 50%;
+            z-index: 0; /* Detrás del contenido */
+            transition: all 0.8s ease-out; /* Transición suave */
+        }
+        
+
+        .circle1 {
+            width: 300px;
+            height: 300px;
+            top: -50px;
+            left: -50px;
+        }
+
+        .circle2 {
+            width: 400px;
+            height: 400px;
+            bottom: 50px;
+            right: 10%;
+        }
+
+        .circle3 {
+            width: 250px;
+            height: 250px;
+            bottom: -50px;
+            left: 20%;
+        }
+
+        .circle4 {
+            width: 350px;
+            height: 350px;
+            top: 20%;
+            right: -50px;
+        }
+
+        .scroll-active {
+            transform: scale(1.5); /* Aumenta el tamaño */
+            opacity: 0.1; /* Reduce la opacidad */
+        }
+
+        .visible {
+            opacity: 1;
+        }
+
+
+        /* Sección interactiva */
+        .interactive-section {
+            text-align: center;
+            padding: 3em 0;
+            background: linear-gradient(to bottom, #2d82b5, #015c92);
+        }
+
+        .interactive-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 1em;
+            color: #ffffff;
+        }
+
+        .circle-container {
+            display: flex;
+            justify-content: space-evenly; /* espacio uniforme */
+            gap: 1em;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .circle {
+            width: 20vw;
+            height: 20vw;
+            max-width: 150px; /* Máximo tamaño para evitar que sean muy grandes */
+            max-height: 150px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column; /* Alinea ícono y texto verticalmente */
+            justify-content: center; /* Centra verticalmente */
+            align-items: center; /* Centra horizontalmente */
+            color: #015c92;
+            font-size: 1em;
+            cursor: pointer;
+            text-align: center;
+            overflow: hidden; /* Asegura que nada se salga del círculo */
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Opcional: sombra para diseño */
+        }
+
+        .circle img {
+            width: 50%;
+            height: auto;
+            margin-bottom: 0.5em;
+        }
+        .circle p {
+            margin: 0; /* Elimina márgenes por defecto */
+            font-size: 0.9em; /* Tamaño del texto */
+            color: #015c92; /* Color de texto */
+        }
+
+        .circle-text {
+            margin-top: 2em;
+            font-size: 1.2em;
+            color: #ffffff;
+        }
+        .circle:hover {
+            background-color: #015c92;
+            color: #53a7d8;
+            transform: scale(1.05);
+        }
+        .circle:hover p {
+            color: #53a7d8;
+        }
+        /* Estilo general del footer */
+        #footer {
+            background-color: #003f64; /* Fondo azul oscuro */
+            color: #ffffff; /* Texto blanco */
+            text-align: center; /* Centra el texto */
+            padding: 2em 1em; /* Espaciado interno */
+            font-family: Arial, sans-serif; /* Fuente general */
+        }
+
+        /* Contenedor del footer */
+        .footer-container {
+            max-width: 1200px; /* Ancho máximo */
+            margin: 0 auto; /* Centra el contenido horizontalmente */
+        }
+
+        /* Estilo del título */
+        .footer-container h3 {
+            font-size: 2em;
+            margin-bottom: 1em;
+            color: #bce6ff; /* Azul claro */
+        }
+
+        /* Lista de enlaces */
+        .footer-container ul {
+            list-style: none; /* Elimina los puntos de la lista */
+            padding: 0; /* Elimina el padding */
+            margin: 0 auto; /* Centra la lista */
+            display: flex; /* Flexbox para centrar los enlaces */
+            flex-wrap: wrap; /* Permite saltos de línea si es necesario */
+            justify-content: center; /* Centra horizontalmente */
+            gap: 1em; /* Espacio entre elementos */
+        }
+
+        /* Estilo de los enlaces */
+        .footer-container ul li a {
+            color: #bce6ff; /* Color del enlace */
+            text-decoration: none; /* Elimina subrayado */
+            font-size: 1.1em;
+            transition: color 0.3s ease; /* Efecto suave */
+        }
+
+        .footer-container ul li a:hover {
+            color: #88cdf6; /* Color más claro al hacer hover */
+        }
+
+        /* Derechos reservados */
+        .footer-container p {
+            margin-top: 1.5em;
+            font-size: 0.9em;
+            color: #bce6ff;
+        }
+
+
+        
+
+    </style>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header class="header">
+        <div class="logo">
+            <img src="assets/images/enlaza_logo.PNG" alt="Logo LSM" style="height: 40px;">
+            <span class = "logo-text">Enlaza</span>
+        </div>
+        <nav class=" navbar">
+            <a href="#stats">Estadísticas</a>
+            <a href="#benefits">Beneficios</a>
+            <a href="#is">Público</a>
+        </nav>
+    </header>
+
+    <!-- Video -->
+    <section class="video-container" >
+        <video controls autoplay loop muted>
+            <source src="assets/videos/video_bv.mp4" type="video/mp4">
+        </video>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Traductor de Lengua de Señas Mexicana</h1>
+        <a href="#" class="btn">Probar Traductor</a>
+        <a href="#" class="btn">Descargar .exe</a>
+    </section>
+
+    <!-- Estadísticas -->
+    <section class="stats" id="stats">
+        <h2>Estadísticas en México</h2>
+        <div class="stats-container">
+            <div class="stat-item">
+                <h3>2.4</h3>
+                <p>Millones de personas con discapacidad auditiva</p>
+            </div>
+            <div class="stat-item">
+                <h3>15</h3>
+                <p>% que conoce Lengua de Señas Mexicana</p>
+            </div>
+            <div class="stat-item">
+                <h3>1000</h3>
+                <p>Intérpretes certificados</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beneficios -->
+    <section class="benefits" id="benefits">
+        <div class="benefit">
+            <div class="text">
+                <h3>Inclusión y equidad</h3>
+                <p>Facilita la comunicación entre personas sordas y oyentes, eliminando barreras lingüísticas.</p>
+            </div>
+            <img src="assets/images/iye.jpg" alt="Inclusion">
+        </div>
+        <div class="benefit">
+            <img src="assets/images/cn.PNG" alt="Cumplimiento">
+            <div class="text">
+                <h3>Cumplimiento normativo</h3>
+                <p>Ayuda a empresas e instituciones a cumplir con estándares de accesibilidad digital.</p>
+            </div>
+        </div>
+        <div class="benefit">
+            <div class="text">
+                <h3>Foco exclusivo en LSM</h3>
+                <p>Centrado en la Lengua de Señas Mexicana, atendemos un nicho desatendido que requiere adaptaciones culturales y lingüísticas específicas para México.</p>
+            </div>
+            <img src="assets/images/foco.PNG" alt="Enfoque">
+        </div>
+        <div class="benefit">
+            <img src="assets/images/personalizacion.PNG" alt="personalización">
+            <div class="text">
+                <h3>Capacidad de personalización</h3>
+                <p>El diseño puede adaptarse a las preferencias de los usuarios (diseño y tamaño del texto).</p>
+            </div>
+        </div>
+        <div class="decorative circle1"></div>
+        <div class="decorative circle2"></div>
+        <div class="decorative circle3"></div>
+        <div class="decorative circle4"></div>
+    </section>
+
+    <!-- Apartado Interactivo -->
+    <section class="interactive-section" id="is">
+        <h2>¿A quién está dirigido?</h2>
+        <div class="circle-container">
+            <div class="circle" onclick="showText('usuarios')">
+                <img src="assets/images/usuario.PNG" alt="Usuarios Individuales">
+                <p>Usuarios Individuales</p>
+            </div>
+            <div class="circle" onclick="showText('empresas')">
+                <img src="assets/images/empresa.PNG" alt="Empresas">
+                <p>Empresas</p>
+            </div>
+            <div class="circle" onclick="showText('escuelas')">
+                <img src="assets/images/escuela.PNG" alt="Escuelas">
+                <p>Escuelas</p>
+            </div>
+            <div class="circle" onclick="showText('sector')">
+                <img src="assets/images/social.PNG" alt="Sector Público">
+                <p>Sector Público</p>
+            </div>
+        </div>
+        <div id="circle-text" class="circle-text">
+            <p id="text-content"></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        
+        <div class="footer-container">
+            <h3>Páginas de Interés</h3>
+            <ul>
+                <li><a href="https://www.conapred.org.mx" target="_blank">CONAPRED</a></li>
+                <li><a href="https://www.spreadthesign.com" target="_blank">SpreadTheSign</a></li>
+                <li><a href="https://señasenmexico.com" target="_blank">Señas en México</a></li>
+                <li><a href="https://www.incluyeme.com" target="_blank">Incluyeme.com</a></li>
+                <li><a href="https://www.mide.org.mx" target="_blank">Museo Interactivo de Economía</a></li>
+                <li><a href="https://www.svisual.org" target="_blank">SVisual</a></li>
+            </ul>
+            
+
+        <p>&copy; 2024 Traductor de LSM. Todos los derechos reservados al Ing. Garza.</p>
+    </footer>
+
+    <!-- Script -->
+    <script>
+        // Contador animado
+        const stats = document.querySelectorAll('.stat');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    stats.forEach(stat => {
+                        const target = parseFloat(stat.getAttribute('data-target'));
+                        let count = 0;
+                        const step = target / 100;
+
+                        const update = () => {
+                            count += step;
+                            if (count >= target) {
+                                stat.textContent = target % 1 === 0 ? Math.round(target) : target;
+                            } else {
+                                stat.textContent = target % 1 === 0 ? Math.round(count) : count.toFixed(1);
+                                requestAnimationFrame(update);
+                            }
+                        };
+                        update();
+                    });
+                }
+            });
+        });
+
+        observer.observe(document.querySelector('.stats'));
+
+        // Figuras dinámicas en beneficios
+        const benefits = document.querySelectorAll('.benefit');
+        const benefitsObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    document.querySelectorAll('.decorative').forEach(el => el.classList.add('visible'));
+                }
+            });
+        });
+
+        benefits.forEach(benefit => benefitsObserver.observe(benefit));
+    </script>
+    <script>
+        function showText(target) {
+            const textContent = document.getElementById("text-content");
+
+            switch (target) {
+                case 'usuarios':
+                    textContent.textContent = "Familiares, amigos e intérpretes interesados en mejorar su comunicación y apoyar la inclusión\nPersonas con discapacidad auditiva que se comunican mediante LSM";
+                    break;
+                case 'empresas':
+                    textContent.textContent = "Empresas que buscan innovar, incluyendo a personas con discapacidad auditiva en su entorno.";
+                    break;
+                case 'escuelas':
+                    textContent.textContent = "Escuelas que desean cumplir con estándares de accesibilidad para la inclusión educativa de personas con discapacidad auditiva.";
+                    break;
+                case 'sector':
+                    textContent.textContent = "Sector público que busca promover la accesibilidad digital en servicios y trámites.";
+                    break;
+                default:
+                    textContent.textContent = "Toca un círculo para más información";
+            }
+        }
+        </script>
+        <script>
+        document.addEventListener("scroll", function () {
+            const circles = document.querySelectorAll(".decorative");
+            const section = document.querySelector(".benefits");
+            const sectionTop = section.getBoundingClientRect().top;
+            const sectionHeight = section.getBoundingClientRect().height;
+
+            // Calcula qué tan dentro de la sección está el scroll
+            const scrollProgress = Math.min(Math.max(0, window.innerHeight - sectionTop), sectionHeight) / sectionHeight;
+
+            circles.forEach((circle, index) => {
+                // Ajusta el tamaño y la opacidad en base al progreso del scroll
+                const scale = 1 + scrollProgress * 0.5; // Aumenta el tamaño progresivamente
+                const opacity = 0.3 - scrollProgress * 0.2; // Disminuye la opacidad
+                circle.style.transform = `scale(${scale})`;
+                circle.style.opacity = opacity;
+            });
+        });
+        </script>
+
+
+</body>
+</html>
