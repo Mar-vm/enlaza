@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traducción de Señas</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        video, canvas {
+            width: 100%;
+            max-width: 800px;
+            border: 5px solid #53a7d8;
+            border-radius: 10px;
+        }
+        p {
+            font-size: 1.5em;
+            color: #015c92;
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Video de la cámara -->
+    <video id="video" autoplay></video>
+    <!-- Canvas oculto para capturar fotogramas -->
+    <canvas id="canvas" style="display:none;"></canvas>
+    <!-- Resultado de la predicción -->
+    <p id="prediction">Predicción: ---</p>
+
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const predictionText = document.getElementById("prediction");
+
+        // Iniciar la cámara local
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                setInterval(captureFrame, 500); // Captura un fotograma cada 500 ms
+            } catch (error) {
+                console.error("Error al acceder a la cámara:", error);
+                alert("No se pudo acceder a la cámara. Verifica los permisos.");
+            }
+        }
+
+        // Captura fotogramas y los envía al servidor Flask
+        async function captureFrame() {
+            // Configura el tamaño del canvas según el video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convierte el fotograma en una imagen (Blob)
+            canvas.toBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append("image", blob);
+
+                try {
+                    // Envía la imagen al servidor Flask
+                    const response = await fetch("https://enlaza-1.fly.dev/predict", {
+                        method: "POST",
+                        body: formData
+                    });
+                    const data = await response.json();
+                    predictionText.textContent = `Predicción: ${data.prediction}`;
+                } catch (error) {
+                    console.error("Error al enviar el fotograma:", error);
+                }
+            }, "image/jpeg");
+        }
+
+        window.onload = startCamera;
+    </script>
+</body>
+</html>
